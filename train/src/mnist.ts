@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as zlib from 'zlib';
-import http from 'http';
+import * as http from 'http';
 
 const DATA_DIR = './data';
 const MNIST_URL = 'http://yann.lecun.com/exdb/mnist/';
@@ -65,4 +65,50 @@ function gunzipFilePaths(
   });
 }
 
-downloadAll();
+async function readFileData(fileName: string) {
+  const stream = fs.createReadStream(`${DATA_DIR}/${fileName}`, {
+    highWaterMark: 32 * 64,
+  });
+
+  const result = [];
+
+  for await (const chunk of stream) {
+    const start = 8;
+    for (let i = start; i < chunk.length; i++) {
+      result.push(chunk.readUInt8());
+    }
+  }
+
+  return result;
+}
+
+async function getTrainImages() {
+  return readFileData(trainImagesFile);
+}
+
+async function getTrainLabels() {
+  return readFileData(trainLabelsFile);
+}
+
+async function getTestImages() {
+  return readFileData(testImagesFile);
+}
+
+async function getTestLabels() {
+  return readFileData(testLabelsFile);
+}
+
+function normalize(num: number) {
+  return num !== 0 ? num / 255 : 0;
+}
+
+export {
+  getTrainImages,
+  getTrainLabels,
+  getTestImages,
+  getTestLabels,
+  downloadAll,
+  normalize
+}
+
+// downloadAll()
