@@ -65,41 +65,93 @@ function gunzipFilePaths(
   });
 }
 
-async function readFileData(fileName: string) {
-  const stream = fs.createReadStream(`${DATA_DIR}/${fileName}`, {
-    highWaterMark: 32 * 64,
-  });
+// async function readFileData(fileName: string) {
+//   const stream = fs.createReadStream(`${DATA_DIR}/${fileName}`, {
+//     highWaterMark: 32 * 1024,
+//   });
 
-  const result = [];
+//   const result = [];
+
+//   for await (const chunk of stream) {
+//     const start = 8;
+//     for (let i = start; i < chunk.length; i++) {
+//       result.push(chunk.readUInt8());
+//     }
+//   }
+
+//   return result;
+// }
+
+async function readLabels(fileName: string) {
+  const stream = fs.createReadStream(`${DATA_DIR}/${fileName}`, {
+    highWaterMark: 32 * 1024,
+  });
+  let firstChunk = true;
+
+  const labels = [];
 
   for await (const chunk of stream) {
-    const start = 8;
+    let start = 0;
+    if (firstChunk) {
+      const version = chunk.readInt32BE(0);
+      if (version !== 2049) {
+        throw 'label file: wrong format';
+      }
+      start = 8;
+      firstChunk = false;
+    }
     for (let i = start; i < chunk.length; i++) {
-      result.push(chunk.readUInt8());
+      labels.push(chunk.readUInt8(i));
     }
   }
 
-  return result;
+  return labels;
+}
+
+async function readImages(fileName: string) {
+  const stream = fs.createReadStream(`${DATA_DIR}/${fileName}`, {
+    highWaterMark: 32 * 1024,
+  });
+  let firstChunk = true;
+
+  const digits = [];
+
+  for await (const chunk of stream) {
+    let start = 0;
+    if (firstChunk) {
+      const version = chunk.readInt32BE(0);
+      if (version !== 2051) {
+        throw 'label file: wrong format';
+      }
+      start = 16;
+      firstChunk = false;
+    }
+    for (let i = start; i < chunk.length; i++) {
+      digits.push(chunk.readUInt8(i));
+    }
+  }
+
+  return digits;
 }
 
 async function getTrainImages() {
-  return readFileData(trainImagesFile);
+  return readImages(trainImagesFile);
 }
 
 async function getTrainLabels() {
-  return readFileData(trainLabelsFile);
+  return readLabels(trainLabelsFile);
 }
 
 async function getTestImages() {
-  return readFileData(testImagesFile);
+  return readImages(testImagesFile);
 }
 
 async function getTestLabels() {
-  return readFileData(testLabelsFile);
+  return readLabels(testLabelsFile);
 }
 
 function normalize(num: number) {
-  return num !== 0 ? num / 255 : 0;
+  return num != 0 ? num / 255 : 0;
 }
 
 export {
@@ -111,4 +163,4 @@ export {
   normalize
 }
 
-// downloadAll()
+// downloadAll();

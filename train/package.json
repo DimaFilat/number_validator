@@ -5,6 +5,7 @@
   "main": ".eslintrc.js",
   "scripts": {
     "mnist": "npx ts-node ./src/mnist.ts",
+    "train": "npx ts-node ./src/tfjs.ts --max-old-space-size=4096",
     "check": "ls -sh ./data"
   },
   "keywords": [],
@@ -21,7 +22,8 @@
     "typescript": "^3.9.7"
   },
   "dependencies": {
-    "brain.js": "^2.0.0-beta.1",
+    "@tensorflow/tfjs-node": "^2.0.1",
+    "@tensorflow/tfjs-node-gpu": "^2.0.1",
     "node-fetch": "^2.6.0"
   }
 }

@@ -1,2 +1,4 @@
 node_modules/
 data/
+cuda-repo-ubuntu1804_10.1.243-1_amd64.deb
+nvidia-machine-learning-repo-ubuntu1804_1.0.0-1_amd64.deb
