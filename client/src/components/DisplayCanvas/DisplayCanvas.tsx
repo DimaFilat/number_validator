@@ -1,7 +1,11 @@
-import React, { useRef, useEffect, MouseEvent } from 'react';
+import React, { useRef, useEffect } from 'react';
 import './DisplayCanvas.css';
 
-export function DisplayCanvas() {
+type DisplayCanvasProps = {
+  prediction?: Function
+}
+
+export function DisplayCanvas({ prediction }: DisplayCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
   const painting = useRef(false);
@@ -16,7 +20,7 @@ export function DisplayCanvas() {
     }
   }, []);
 
-  function startPosition(e: MouseEvent) {
+  function startPosition(e: React.MouseEvent) {
     painting.current = true;
     draw(e);
   }
@@ -32,7 +36,7 @@ export function DisplayCanvas() {
   //   canvas.width = Math.floor(window.innerWidth / 2)
   // }
 
-  function draw({ nativeEvent }: MouseEvent) {
+  function draw({ nativeEvent }: React.MouseEvent) {
     if (!painting.current || ctxRef.current === null) return;
     const { offsetX, offsetY } = nativeEvent;
 
@@ -44,15 +48,35 @@ export function DisplayCanvas() {
     ctxRef.current.moveTo(offsetX, offsetY);
   }
 
+  function clearWindow() {
+    if (ctxRef.current === null || canvasRef.current === null) return;
+    ctxRef.current.clearRect(
+      0,
+      0,
+      canvasRef.current.width,
+      canvasRef.current.height,
+    );
+  }
+
+  function sendDataUrl(send: Function | undefined) {
+    if (send && ctxRef.current !== null) return send(
+      ctxRef.current.getImageData(0, 0, 28, 28)
+    )
+  }
+
   return (
-    <div className="display">
-      <canvas
-        className="display__canvas"
-        onMouseDown={startPosition}
-        onMouseUp={finishPosition}
-        onMouseMove={draw}
-        ref={canvasRef}
-      />
-    </div>
+    <>
+      <div className="display">
+        <canvas
+          className="display__canvas"
+          onMouseDown={startPosition}
+          onMouseUp={finishPosition}
+          onMouseMove={draw}
+          ref={canvasRef}
+        />
+      </div>
+      <button onClick={clearWindow}>clear</button>
+      <button onClick={() => sendDataUrl(prediction)}>prediction</button>
+    </>
   );
 }
