@@ -4,6 +4,7 @@
   "description": "",
   "main": ".eslintrc.js",
   "scripts": {
+    "start": "npx ts-node ./src/index.ts",
     "mnist": "npx ts-node ./src/mnist.ts",
     "train": "npx ts-node ./src/tfjs.ts --max-old-space-size=4096",
     "check": "ls -sh ./data"

@@ -65,23 +65,6 @@ function gunzipFilePaths(
   });
 }
 
-// async function readFileData(fileName: string) {
-//   const stream = fs.createReadStream(`${DATA_DIR}/${fileName}`, {
-//     highWaterMark: 32 * 1024,
-//   });
-
-//   const result = [];
-
-//   for await (const chunk of stream) {
-//     const start = 8;
-//     for (let i = start; i < chunk.length; i++) {
-//       result.push(chunk.readUInt8());
-//     }
-//   }
-
-//   return result;
-// }
-
 async function readLabels(fileName: string) {
   const stream = fs.createReadStream(`${DATA_DIR}/${fileName}`, {
     highWaterMark: 32 * 1024,
@@ -160,7 +143,7 @@ export {
   getTestImages,
   getTestLabels,
   downloadAll,
-  normalize
-}
+  normalize,
+};
 
 // downloadAll();
