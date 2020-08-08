@@ -1,16 +1,46 @@
 import { createServer, IncomingMessage, ServerResponse, Server } from 'http';
 import * as tf from '@tensorflow/tfjs-node';
+import { isArray } from 'util';
 
 const IP = 'localhost';
 const PORT = 8080;
 const BACKLOG = 100;
 
 async function requestHandler(req: IncomingMessage, res: ServerResponse) {
-  console.log(req.url);
+  res.setHeader('Access-Control-Allow-Origin', ' http://localhost:3000');
+  res.setHeader('Vary', 'Origin');
+  // res.setHeader('Access-Control-Allow-Origin', ' http://192.168.223.130:3000');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Content-Type, acess-control-allow-origin',
+  );
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'GET, POST, PUT, DELETE, OPTIONS',
+  );
+  console.log(req.url, req.method);
   switch (req.url) {
     case '/model':
-      const model = await tf.loadLayersModel('file://./model/model.json');
-      res.end(JSON.stringify(model));
+      res.setHeader('Content-Type', 'application/json');
+      if (req.method === 'POST') {
+        console.log('hello');
+        const imageData = await getJSONDataFromRequestStream<ImageData>(req);
+        const model = await tf.loadLayersModel('file://./model/model.json');
+        const values = prepareImageData(imageData);
+        const predictTensor = model.predict(
+          tf.tensor4d(values, [1, 28, 28, 1]),
+        ) as tf.Tensor;
+        const data = predictTensor.dataSync<'float32'>();
+        const detectedNumberCNN = indexMax(data);
+        const detectionsCNN = data;
+        console.log(detectedNumberCNN, detectionsCNN);
+        console.log(tf.argMax(predictTensor, 1).dataSync());
+        // res.end(JSON.stringify(model));
+        res.end(JSON.stringify(values));
+      }
+      res.statusCode = 200;
+      res.end();
       return;
     default:
       res.statusCode = 404;
@@ -28,3 +58,34 @@ server
   .on('error', (error: Error) => {
     console.log(`Something went wrong ${error}`);
   });
+
+function getJSONDataFromRequestStream<T>(req: IncomingMessage): Promise<T> {
+  return new Promise((resolve) => {
+    const chunks: any[] = [];
+    req.on('data', (chunk) => {
+      console.log('fire');
+      chunks.push(chunk);
+    });
+    req.on('end', () => {
+      resolve(JSON.parse(Buffer.concat(chunks).toString()));
+    });
+  });
+}
+
+function prepareImageData(imageData: ImageData) {
+  const numPixels = imageData.width * imageData.height;
+  const values = new Array<number>(numPixels);
+  for (let i = 0; i < numPixels; i++) {
+    values[i] = imageData.data[i * 4 + 3] / 255.0;
+  }
+  return values
+}
+
+function indexMax(data: Float32Array): number {
+  let indexMax = 0;
+  for (let r = 0; r < data.length; r++) {
+    indexMax = data[r] > data[indexMax] ? r : indexMax;
+  }
+
+  return indexMax;
+}
