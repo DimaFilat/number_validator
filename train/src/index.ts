@@ -75,7 +75,7 @@ function prepareImageData(imageData: ImageData) {
   for (let i = 0; i < numPixels; i++) {
     values[i] = imageData.data[i * 4 + 3] / 255.0;
   }
-  return values
+  return values;
 }
 
 function indexMax(data: Float32Array): number {

@@ -38,12 +38,6 @@ export function DisplayCanvas({ prediction }: DisplayCanvasProps) {
     ctxRef.current !== null && ctxRef.current.beginPath();
   }
 
-  // Resizing
-  // function windowResize() {
-  //   canvas.height = Math.floor(window.innerHeight / 2)
-  //   canvas.width = Math.floor(window.innerWidth / 2)
-  // }
-
   function draw({ nativeEvent }: React.MouseEvent) {
     if (
       !painting.current ||
@@ -72,7 +66,7 @@ export function DisplayCanvas({ prediction }: DisplayCanvasProps) {
       minY: Math.min(box.minY, y),
     }));
 
-    console.log(x, y, drawingBox)
+    console.log(x, y, drawingBox);
   }
 
   function clearWindow() {
@@ -94,14 +88,14 @@ export function DisplayCanvas({ prediction }: DisplayCanvasProps) {
     const copyContext = canvasCopy.getContext('2d');
     const ratioX = canvasRef.current.width / 28;
     const ratioY = canvasRef.current.height / 28;
-    console.log('ratio', ratioX, ratioY)
+    console.log('ratio', ratioX, ratioY);
     const drawBox = [
       drawingBox.minX,
       drawingBox.minY,
       drawingBox.maxX,
       drawingBox.maxY,
     ];
-    console.log(drawBox)
+    console.log(drawBox);
     const scaledSourceWidth = Math.min(
       20,
       Math.max(4, (drawBox[2] - drawBox[0] + 32) / ratioX),
