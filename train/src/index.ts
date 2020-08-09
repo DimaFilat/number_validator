@@ -9,7 +9,6 @@ const BACKLOG = 100;
 async function requestHandler(req: IncomingMessage, res: ServerResponse) {
   res.setHeader('Access-Control-Allow-Origin', ' http://localhost:3000');
   res.setHeader('Vary', 'Origin');
-  // res.setHeader('Access-Control-Allow-Origin', ' http://192.168.223.130:3000');
   res.setHeader(
     'Access-Control-Allow-Headers',
     'Content-Type, acess-control-allow-origin',
@@ -36,7 +35,6 @@ async function requestHandler(req: IncomingMessage, res: ServerResponse) {
         const detectionsCNN = data;
         console.log(detectedNumberCNN, detectionsCNN);
         console.log(tf.argMax(predictTensor, 1).dataSync());
-        // res.end(JSON.stringify(model));
         res.end(JSON.stringify(values));
       }
       res.statusCode = 200;
@@ -63,7 +61,6 @@ function getJSONDataFromRequestStream<T>(req: IncomingMessage): Promise<T> {
   return new Promise((resolve) => {
     const chunks: any[] = [];
     req.on('data', (chunk) => {
-      console.log('fire');
       chunks.push(chunk);
     });
     req.on('end', () => {
