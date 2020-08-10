@@ -1,8 +1,10 @@
 
 .display {
-  border: 2px solid black;
+  border: 2px solid white;
+  border-radius: 12%;
   width: 300px;
   height: 300px;
+  background-color: var(--c-elements);
 }
 
 .display__canvas {

@@ -1,6 +1,5 @@
 import { createServer, IncomingMessage, ServerResponse, Server } from 'http';
 import * as tf from '@tensorflow/tfjs-node';
-import { isArray } from 'util';
 
 const IP = 'localhost';
 const PORT = 8080;
@@ -19,6 +18,10 @@ async function requestHandler(req: IncomingMessage, res: ServerResponse) {
     'GET, POST, PUT, DELETE, OPTIONS',
   );
   console.log(req.url, req.method);
+  if (req.method === 'OPTIONS') {
+    res.statusCode = 200;
+    return res.end();
+  }
   switch (req.url) {
     case '/model':
       res.setHeader('Content-Type', 'application/json');
@@ -35,9 +38,10 @@ async function requestHandler(req: IncomingMessage, res: ServerResponse) {
         const detectionsCNN = data;
         console.log(detectedNumberCNN, detectionsCNN);
         console.log(tf.argMax(predictTensor, 1).dataSync());
-        res.end(JSON.stringify(values));
+        res.statusCode = 200;
+        return res.end(JSON.stringify({ detectedNumberCNN, detectionsCNN }));
       }
-      res.statusCode = 200;
+      res.statusCode = 404;
       res.end();
       return;
     default:

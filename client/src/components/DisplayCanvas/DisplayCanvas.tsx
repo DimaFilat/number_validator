@@ -12,6 +12,17 @@ const DEFAULT_DRAWING_BOX = {
   minY: Number.MAX_SAFE_INTEGER,
 };
 
+const LINE_WIDTH = 24;
+const COPY_CANVAS_SIZE = {
+  width: 28,
+  height: 28,
+};
+
+const MNIST_BOX_SIZE = {
+  width: 20,
+  heigth: 20,
+};
+
 export function DisplayCanvas({ prediction }: DisplayCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
@@ -47,7 +58,7 @@ export function DisplayCanvas({ prediction }: DisplayCanvasProps) {
       return;
     const { offsetX, offsetY } = nativeEvent;
 
-    ctxRef.current.lineWidth = 32;
+    ctxRef.current.lineWidth = LINE_WIDTH;
     ctxRef.current.lineCap = 'round';
     ctxRef.current.lineTo(offsetX, offsetY);
     ctxRef.current.stroke();
@@ -65,8 +76,6 @@ export function DisplayCanvas({ prediction }: DisplayCanvasProps) {
       minX: Math.min(box.minX, x),
       minY: Math.min(box.minY, y),
     }));
-
-    console.log(x, y, drawingBox);
   }
 
   function clearWindow() {
@@ -80,46 +89,51 @@ export function DisplayCanvas({ prediction }: DisplayCanvasProps) {
     setDrawingBox(DEFAULT_DRAWING_BOX);
   }
 
-  function sendDataUrl(send: Function | undefined) {
-    if (!send || ctxRef.current === null || canvasRef.current === null) return;
+  function sendDataUrl(send: Function | void) {
+    if (!send) return;
+    const imageData = reScaleImageData();
+    return imageData && imageData !== null ? send(imageData) : null;
+  }
+
+  function reScaleImageData(): ImageData | null | void {
+    if (ctxRef.current === null || canvasRef.current === null) return;
     const canvasCopy = document.createElement('canvas');
-    canvasCopy.width = 28;
-    canvasCopy.height = 28;
+    const { width: imageWidth, height: imageHeigth } = COPY_CANVAS_SIZE;
+    const {
+      width: mnistBoxSizeWidth,
+      heigth: mnistBoxSizeHeight,
+    } = MNIST_BOX_SIZE;
+    canvasCopy.width = imageWidth;
+    canvasCopy.height = imageHeigth;
     const copyContext = canvasCopy.getContext('2d');
-    const ratioX = canvasRef.current.width / 28;
-    const ratioY = canvasRef.current.height / 28;
-    console.log('ratio', ratioX, ratioY);
-    const drawBox = [
-      drawingBox.minX,
-      drawingBox.minY,
-      drawingBox.maxX,
-      drawingBox.maxY,
-    ];
-    console.log(drawBox);
+    const ratioX = canvasRef.current.width / imageWidth;
+    const ratioY = canvasRef.current.height / imageHeigth;
     const scaledSourceWidth = Math.min(
-      20,
-      Math.max(4, (drawBox[2] - drawBox[0] + 32) / ratioX),
+      mnistBoxSizeWidth,
+      Math.max(4, (drawingBox.maxX - drawingBox.minX + LINE_WIDTH) / ratioX),
     );
     const scaledSourceHeight = Math.min(
-      20,
-      (drawBox[3] - drawBox[1] + 32) / ratioY,
+      mnistBoxSizeHeight,
+      (drawingBox.maxY - drawingBox.minY + LINE_WIDTH) / ratioY,
     );
-    const dx = (28 - scaledSourceWidth) / 2;
-    const dy = (28 - scaledSourceHeight) / 2;
+    const dx = (imageWidth - scaledSourceWidth) / 2;
+    const dy = (imageHeigth - scaledSourceHeight) / 2;
 
     copyContext &&
       copyContext.drawImage(
         canvasRef.current,
-        drawBox[0] - 16,
-        drawBox[1] - 16,
-        drawBox[2] - drawBox[0] + 16,
-        drawBox[3] - drawBox[1] + 16,
+        drawingBox.minX - LINE_WIDTH / 2,
+        drawingBox.minY - LINE_WIDTH / 2,
+        drawingBox.maxX - drawingBox.minX + LINE_WIDTH / 2,
+        drawingBox.maxY - drawingBox.minY + LINE_WIDTH / 2,
         dx,
         dy,
         scaledSourceWidth,
         scaledSourceHeight,
       );
-    return copyContext ? send(copyContext.getImageData(0, 0, 28, 28)) : null;
+    return copyContext
+      ? copyContext.getImageData(0, 0, imageWidth, imageHeigth)
+      : null;
   }
 
   return (
