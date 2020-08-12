@@ -60,6 +60,7 @@ export function DisplayCanvas({ prediction }: DisplayCanvasProps) {
 
     ctxRef.current.lineWidth = LINE_WIDTH;
     ctxRef.current.lineCap = 'round';
+    ctxRef.current.strokeStyle = '#97a7c3';
     ctxRef.current.lineTo(offsetX, offsetY);
     ctxRef.current.stroke();
     ctxRef.current.beginPath();
@@ -138,7 +139,17 @@ export function DisplayCanvas({ prediction }: DisplayCanvasProps) {
 
   return (
     <>
-      <div className="display">
+      <div className="display display_statistic">
+        {Array.from({ length: 10 }).map((_, i) => (
+          <div className='statistic'>
+            <div key={`el${i}`} className="statistic__bar">
+              <span className="statistic__bar-toggler"></span>
+            </div>
+            <span className="statistic__number">{i}</span>
+          </div>
+        ))}
+      </div>
+      <div className="display display_draw">
         <canvas
           className="display__canvas"
           onMouseDown={startPosition}
@@ -147,8 +158,14 @@ export function DisplayCanvas({ prediction }: DisplayCanvasProps) {
           ref={canvasRef}
         />
       </div>
-      <button onClick={clearWindow}>clear</button>
-      <button onClick={() => sendDataUrl(prediction)}>prediction</button>
+      <div className="display_btn-wrapper">
+        <button className="display_btn" onClick={clearWindow}>
+          clear
+        </button>
+        <button className="display_btn" onClick={() => sendDataUrl(prediction)}>
+          prediction
+        </button>
+      </div>
     </>
   );
 }

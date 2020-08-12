@@ -1,12 +1,87 @@
-
 .display {
-  border: 2px solid white;
+  border: 2px solid var(--c-prime-white);
   border-radius: 12%;
   width: 300px;
+  background-color: var(--c-background);
+  box-shadow: inset 6px 6px 10px -1px rgba(0, 0, 0, 0.15),
+    inset -6px -6px 10px -1px rgba(255, 255, 255, 0.7);
+  margin-bottom: 1.5em;
+}
+
+.display_statistic {
+  height: 250px;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-flow: row nowrap;
+}
+
+.statistic {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+}
+
+.statistic__bar {
+  position: relative;
+  height: 15em;
+  width: 1.5em;
+  border-radius: 1em;
+  background-color: var(--c-1);
+  margin-bottom: 1em;
+  box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.15),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.7);
+}
+
+.statistic__bar-toggler {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  border: 1px solid var(--c-prime-white);
+  border-radius: 1em;
+  background: linear-gradient(25deg, var(--c-background), 75%, var(--c-prime-white));
+  height: 50%;
+  width: 100%;
+  transition: all .6s ease-in-out;
+}
+
+.statistic__bar-toggler:hover {
+  height: 90%;
+}
+
+.statistic__number {
+  font-weight: bold;
+  font-style: italic;
+  font-size: 1.1em;
+  color: var(--c-1);
+  text-shadow: -1px 0 var(--c-prime-white), 0 1px var(--c-prime-white), 1px 0 var(--c-prime-white), 0 -1px var(--c-prime-white);
+}
+
+.display_draw {
   height: 300px;
-  background-color: var(--c-elements);
 }
 
 .display__canvas {
   display: block;
+}
+
+.display_btn-wrapper {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-evenly;
+  width: 300px;
+}
+
+.display_btn {
+  width: 100px;
+  height: 45px;
+  border-radius: 23px;
+  background: linear-gradient(to right, var(--c-background), 90%, var(--c-prime-white));
+  /* background-color: var(--c-bacground);s */
+  border: 2px solid var(--c-prime-white);
+  box-shadow: 6px 6px 10px -1px rgba(0, 0, 0, 0.15),
+    -6px -6px 10px -1px rgba(255, 255, 255, 0.7);
+  font-size: 1.1em;
+  color:   var(--c-1);
+  text-shadow: -1px 0 var(--c-prime-white), 0 1px var(--c-prime-white), 1px 0 var(--c-prime-white), 0 -1px var(--c-prime-white);
 }

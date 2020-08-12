@@ -34,8 +34,12 @@ img {
 }
 
 :root {
-  --c-backgraound: #fafbff;
+  --c-prime-white: #fff;
+  --c-background: #ecf0f3;
   --c-elements: #e6f3fc;
+  --c-1: #d1d9e6;
+  --c-2: #97a7c3;
+  --c-3: #193566;
 }
 
 .App {
@@ -44,5 +48,5 @@ img {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: var(--c-backgraound);
+  background-color: var(--c-background);
 }
