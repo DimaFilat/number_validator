@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { DisplayCanvas } from './components/DisplayCanvas';
 import './App.css';
 
+type Predict = {
+  detectedNumberCNN: number
+  detectionsCNN: number[]
+}
+
 function App() {
+  const [predict, setPredict] = useState<Predict | null>(null)
   async function prepareDataFromCanvas({ data, width, height }: ImageData) {
     const imageDataCopy = { data, width, height };
     const response = await fetch('http://localhost:8080/model', {
@@ -16,12 +22,16 @@ function App() {
       body: JSON.stringify(imageDataCopy),
     });
     const result = await response.json();
-    console.log('client result', result);
+    setPredict(result)
   }
 
   return (
     <div className="App">
-      <DisplayCanvas prediction={prepareDataFromCanvas} />
+      <DisplayCanvas
+        predict={predict}
+        prediction={prepareDataFromCanvas}
+        clearPredict={() => setPredict(null)}
+      />
     </div>
   );
 }

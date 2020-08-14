@@ -39,22 +39,25 @@
   left: 0;
   border: 1px solid var(--c-prime-white);
   border-radius: 1em;
-  background: linear-gradient(25deg, var(--c-background), 75%, var(--c-prime-white));
-  height: 50%;
+  background: linear-gradient(
+    25deg,
+    var(--c-background),
+    75%,
+    var(--c-prime-white)
+  );
+  height: var(--s-width);
   width: 100%;
-  transition: all .6s ease-in-out;
-}
-
-.statistic__bar-toggler:hover {
-  height: 90%;
+  transition: all 0.5s ease-in-out;
 }
 
 .statistic__number {
   font-weight: bold;
   font-style: italic;
-  font-size: 1.1em;
+  font-size: 1.3em;
   color: var(--c-1);
-  text-shadow: -1px 0 var(--c-prime-white), 0 1px var(--c-prime-white), 1px 0 var(--c-prime-white), 0 -1px var(--c-prime-white);
+  text-shadow: -1px 0 var(--c-prime-white), 0 1px var(--c-prime-white),
+    1px 0 var(--c-prime-white), 0 -1px var(--c-prime-white);
+  transition: all 0.175s ease-in-out;
 }
 
 .display_draw {
@@ -76,12 +79,42 @@
   width: 100px;
   height: 45px;
   border-radius: 23px;
-  background: linear-gradient(to right, var(--c-background), 90%, var(--c-prime-white));
+  background: linear-gradient(
+    to right,
+    var(--c-background),
+    90%,
+    var(--c-prime-white)
+  );
   /* background-color: var(--c-bacground);s */
   border: 2px solid var(--c-prime-white);
   box-shadow: 6px 6px 10px -1px rgba(0, 0, 0, 0.15),
-    -6px -6px 10px -1px rgba(255, 255, 255, 0.7);
+    -6px -6px 10px -1px rgba(255, 255, 255, 0.7),
+    inset -1px -1px 4px -1px rgba(0, 0, 0, 0.15),
+    -1px -1px 4px -1px rgba(255, 255, 255, 0.15);
   font-size: 1.1em;
-  color:   var(--c-1);
-  text-shadow: -1px 0 var(--c-prime-white), 0 1px var(--c-prime-white), 1px 0 var(--c-prime-white), 0 -1px var(--c-prime-white);
+  cursor: pointer;
+  outline: none;
+}
+
+.display_btn:active {
+  box-shadow: inset 6px 6px 10px -1px rgba(0, 0, 0, 0.15),
+    inset -6px -6px 10px -1px rgba(255, 255, 255, 0.7),
+    inset -1px -1px 4px -1px rgba(0, 0, 0, 0.15),
+    inset -1px -1px 4px -1px rgba(255, 255, 255, 0.15);
+}
+
+.display_btn svg {
+  height: 30px;
+  width: 30px;
+  fill: var(--c-prime-white);
+  filter: drop-shadow(2px 2px 5px rgba(0, 0, 0, 0.15));
+}
+
+.btn_clear svg {
+  width: 25px;
+  height: 25px;
+}
+
+.statistic__number.predicted {
+  color: var(--c-2);
 }

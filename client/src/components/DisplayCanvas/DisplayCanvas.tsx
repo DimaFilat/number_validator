@@ -1,8 +1,17 @@
 import React, { useRef, useEffect, useState } from 'react';
 import './DisplayCanvas.css';
+import { ReactComponent as BrainSVG } from '../../assets/svg/brain.svg';
+import { ReactComponent as ClearSvg } from '../../assets/svg/clear.svg';
+
+type Predict = {
+  detectedNumberCNN: number;
+  detectionsCNN: number[];
+};
 
 type DisplayCanvasProps = {
+  predict: Predict | null;
   prediction: Function;
+  clearPredict: Function;
 };
 
 const DEFAULT_DRAWING_BOX = {
@@ -23,7 +32,11 @@ const MNIST_BOX_SIZE = {
   heigth: 20,
 };
 
-export function DisplayCanvas({ prediction }: DisplayCanvasProps) {
+export function DisplayCanvas({
+  predict,
+  prediction,
+  clearPredict,
+}: DisplayCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
   const painting = useRef(false);
@@ -137,15 +150,37 @@ export function DisplayCanvas({ prediction }: DisplayCanvasProps) {
       : null;
   }
 
+  const mystyles = (num: number) =>
+    ({
+      '--s-width': `${num < 10 ? 10 : num}%`,
+    } as React.CSSProperties);
+
+  const predictStyles = (i: number) =>
+    predict !== null
+      ? mystyles(Math.floor(predict.detectionsCNN[i] * 100))
+      : mystyles(10);
+
   return (
     <>
       <div className="display display_statistic">
         {Array.from({ length: 10 }).map((_, i) => (
-          <div className='statistic'>
-            <div key={`el${i}`} className="statistic__bar">
+          <div className="statistic">
+            <div
+              key={`el${i}`}
+              className="statistic__bar"
+              style={predictStyles(i)}
+            >
               <span className="statistic__bar-toggler"></span>
             </div>
-            <span className="statistic__number">{i}</span>
+            <span
+              className={
+                predict !== null && i === predict.detectedNumberCNN
+                  ? `statistic__number predicted`
+                  : `statistic__number`
+              }
+            >
+              {i}
+            </span>
           </div>
         ))}
       </div>
@@ -159,11 +194,26 @@ export function DisplayCanvas({ prediction }: DisplayCanvasProps) {
         />
       </div>
       <div className="display_btn-wrapper">
-        <button className="display_btn" onClick={clearWindow}>
-          clear
+        <button
+          title="clear"
+          className="display_btn btn_clear"
+          onClick={() => {
+            clearWindow();
+            clearPredict();
+          }}
+        >
+          <i>
+            <ClearSvg />
+          </i>
         </button>
-        <button className="display_btn" onClick={() => sendDataUrl(prediction)}>
-          prediction
+        <button
+          title="predict"
+          className="display_btn"
+          onClick={() => sendDataUrl(prediction)}
+        >
+          <i>
+            <BrainSVG />
+          </i>
         </button>
       </div>
     </>
