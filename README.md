@@ -1,1 +1,1 @@
-linter configs for typescript projects
+Validation canvas image data with tensorflow js CNN algorithm 
