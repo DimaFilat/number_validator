@@ -27,7 +27,7 @@
   height: 15em;
   width: 1.5em;
   border-radius: 1em;
-  background-color: var(--c-1);
+  background-color: var(--c-silver);
   margin-bottom: 1em;
   box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.15),
     inset -2px -2px 5px rgba(255, 255, 255, 0.7);
@@ -45,7 +45,7 @@
     75%,
     var(--c-prime-white)
   );
-  height: var(--s-width);
+  height: var(--s-height);
   width: 100%;
   transition: all 0.5s ease-in-out;
 }
@@ -54,7 +54,7 @@
   font-weight: bold;
   font-style: italic;
   font-size: 1.3em;
-  color: var(--c-1);
+  color: var(--c-silver);
   text-shadow: -1px 0 var(--c-prime-white), 0 1px var(--c-prime-white),
     1px 0 var(--c-prime-white), 0 -1px var(--c-prime-white);
   transition: all 0.175s ease-in-out;
@@ -85,7 +85,6 @@
     90%,
     var(--c-prime-white)
   );
-  /* background-color: var(--c-bacground);s */
   border: 2px solid var(--c-prime-white);
   box-shadow: 6px 6px 10px -1px rgba(0, 0, 0, 0.15),
     -6px -6px 10px -1px rgba(255, 255, 255, 0.7),
@@ -94,6 +93,17 @@
   font-size: 1.1em;
   cursor: pointer;
   outline: none;
+}
+
+.display_btn[disabled] {
+  cursor: not-allowed;
+}
+
+.display_btn:active[disabled] {
+  box-shadow: 6px 6px 10px -1px rgba(0, 0, 0, 0.15),
+  -6px -6px 10px -1px rgba(255, 255, 255, 0.7),
+  inset -1px -1px 4px -1px rgba(0, 0, 0, 0.15),
+  -1px -1px 4px -1px rgba(255, 255, 255, 0.15);
 }
 
 .display_btn:active {
@@ -116,5 +126,5 @@
 }
 
 .statistic__number.predicted {
-  color: var(--c-2);
+  color: var( --c-a-silver);
 }

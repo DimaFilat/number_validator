@@ -32,6 +32,8 @@ const MNIST_BOX_SIZE = {
   heigth: 20,
 };
 
+const STROKE_STYLE = '#97a7c3'
+
 export function DisplayCanvas({
   predict,
   prediction,
@@ -52,7 +54,7 @@ export function DisplayCanvas({
     }
   }, []);
 
-  function startPosition(e: React.MouseEvent) {
+  function startPosition(e: React.MouseEvent | React.TouchEvent) {
     painting.current = true;
     draw(e);
   }
@@ -62,27 +64,30 @@ export function DisplayCanvas({
     ctxRef.current !== null && ctxRef.current.beginPath();
   }
 
-  function draw({ nativeEvent }: React.MouseEvent) {
+  function draw({ nativeEvent }: React.MouseEvent | React.TouchEvent) {
     if (
       !painting.current ||
       ctxRef.current === null ||
       canvasRef.current === null
     )
       return;
-    const { offsetX, offsetY } = nativeEvent;
 
-    ctxRef.current.lineWidth = LINE_WIDTH;
-    ctxRef.current.lineCap = 'round';
-    ctxRef.current.strokeStyle = '#97a7c3';
-    ctxRef.current.lineTo(offsetX, offsetY);
-    ctxRef.current.stroke();
-    ctxRef.current.beginPath();
-    ctxRef.current.moveTo(offsetX, offsetY);
+    const event = nativeEvent instanceof MouseEvent
+      ? nativeEvent
+      : nativeEvent.touches[0]
 
     const { left, top } = canvasRef.current.getBoundingClientRect();
 
-    const x = nativeEvent.clientX - left;
-    const y = nativeEvent.clientY - top;
+    const x = event.clientX - left;
+    const y = event.clientY - top;
+
+    ctxRef.current.lineWidth = LINE_WIDTH;
+    ctxRef.current.lineCap = 'round';
+    ctxRef.current.strokeStyle = STROKE_STYLE;
+    ctxRef.current.lineTo(x, y);
+    ctxRef.current.stroke();
+    ctxRef.current.beginPath();
+    ctxRef.current.moveTo(x, y);
 
     setDrawingBox((box) => ({
       maxX: Math.max(box.maxX, x),
@@ -152,7 +157,7 @@ export function DisplayCanvas({
 
   const mystyles = (num: number) =>
     ({
-      '--s-width': `${num < 10 ? 10 : num}%`,
+      '--s-height': `${num < 10 ? 10 : num}%`,
     } as React.CSSProperties);
 
   const predictStyles = (i: number) =>
@@ -170,7 +175,7 @@ export function DisplayCanvas({
               className="statistic__bar"
               style={predictStyles(i)}
             >
-              <span className="statistic__bar-toggler"></span>
+              <div className="statistic__bar-toggler"></div>
             </div>
             <span
               className={
@@ -187,6 +192,9 @@ export function DisplayCanvas({
       <div className="display display_draw">
         <canvas
           className="display__canvas"
+          onTouchStart={startPosition}
+          onTouchEnd={finishPosition}
+          onTouchMove={draw}
           onMouseDown={startPosition}
           onMouseUp={finishPosition}
           onMouseMove={draw}
@@ -201,12 +209,13 @@ export function DisplayCanvas({
             clearWindow();
             clearPredict();
           }}
-        >
+          >
           <i>
             <ClearSvg />
           </i>
         </button>
         <button
+          disabled={!painting.current}
           title="predict"
           className="display_btn"
           onClick={() => sendDataUrl(prediction)}

@@ -37,9 +37,8 @@ img {
   --c-prime-white: #fff;
   --c-background: #ecf0f3;
   --c-elements: #e6f3fc;
-  --c-1: #d1d9e6;
-  --c-2: #97a7c3;
-  --c-3: #193566;
+  --c-silver: #d1d9e6;
+  --c-a-silver: #97a7c3;
 }
 
 .App {
