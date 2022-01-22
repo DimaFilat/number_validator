@@ -25,6 +25,6 @@
   "dependencies": {
     "@tensorflow/tfjs-node": "^2.0.1",
     "@tensorflow/tfjs-node-gpu": "^2.0.1",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^3.1.1"
   }
 }
